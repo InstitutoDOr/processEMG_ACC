@@ -1,5 +1,5 @@
 {
-  "name": "SCRIPTS-EMG-ACC",
+  "name": "processEMG_ACC",
   "description": "Scripts for signal processing electromyography (EMG) or acceleration sensor (ACC)",
   "main": "",
   "keywords": [
