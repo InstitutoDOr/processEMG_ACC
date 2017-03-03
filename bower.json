@@ -1,0 +1,21 @@
+{
+  "name": "SCRIPTS-EMG-ACC",
+  "description": "Scripts for signal processing electromyography (EMG) or acceleration sensor (ACC)",
+  "main": "",
+  "keywords": [
+    "EMG",
+    "ACC"
+  ],
+  "authors": [
+    "Sebastian Hoefle <sebastian.hoefle@idor.org>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
