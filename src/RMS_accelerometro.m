@@ -1,18 +1,18 @@
-function [signal R R_blocos] = RMS_accelerometro( accfiles, rootdir, fs_acc, dur_rest_seg, dur_activation_seg, repetitions, plotar )
+function [signal R R_blocos] = RMS_accelerometro( accfiles, fs_acc, dur_rest_seg, dur_activation_seg, repetitions, plotar )
 
-if nargin < 4
+if nargin < 3
     duration_block_repouso = 20; % em segundos 
 else
     duration_block_repouso = dur_rest_seg;
 end
 
-if nargin < 5
+if nargin < 4
     duration_block_activation = 20 ; %  em segundos 
 else
     duration_block_activation = dur_activation_seg;
 end
 
-if nargin < 6
+if nargin < 5
     numBlocks = 10; % numero de pares de blocos\
 else
     numBlocks = repetitions;
@@ -52,7 +52,7 @@ inds_repouso = tmp;
 figure
 for k =1 :length( accfiles )
 
-    acc = load( fullfile( rootdir, accfiles(k).name ) );
+    acc = load( accfiles{k} );
 
     %% prepare Acc
     % first column is channel number, x,z, are channel 9, 10 ,11
@@ -68,18 +68,26 @@ for k =1 :length( accfiles )
     % especificacao da unidade do acelerometro: 420mV por g
     acc = acc / 1000 / 420; % convert units to multiple of g = 9,81 m / s^2
         
-    tit = makeTitle( accfiles(k).name );
+    [~, filename] = fileparts(accfiles{k});
+    tit = makeTitle( accfiles{k} );
 
     ylimits = [ -3 3 ];
 
-    [rmsRepouso_blocos rmsActivation_blocos p_blocos] = calcRMS_por_bloco( acc, inds_repouso_bloco, inds_activation_bloco );
-
-    if plotar
-        [rmsActivation(k,1) rmsRepouso(k,1)] = calcAndPlotRMS( acc, inds_activation, inds_repouso, fs_acc, ' x 9.81 m/s^2 ', 'ACC', tit, length( accfiles ), k, ylimits )
-    else
-        [rmsActivation(k,1) rmsRepouso(k,1)] = calcRMS_data( acc, inds_activation, inds_repouso );
-    end
+    try
+        [rmsRepouso_blocos rmsActivation_blocos p_blocos] = calcRMS_por_bloco( acc, inds_repouso_bloco, inds_activation_bloco );
         
+        if plotar
+            [rmsActivation(k,1) rmsRepouso(k,1)] = calcAndPlotRMS( acc, inds_activation, inds_repouso, fs_acc, ' x 9.81 m/s^2 ', 'ACC', tit, length( accfiles ), k, ylimits )
+        else
+            [rmsActivation(k,1) rmsRepouso(k,1)] = calcRMS_data( acc, inds_activation, inds_repouso );
+        end
+    catch
+        rmsRepouso_blocos = NaN;
+        rmsActivation_blocos = NaN;
+        p_blocos = NaN;
+        rmsActivation(k,1) = NaN;
+        rmsRepouso(k,1) = NaN;
+    end
     R{k,1} = tit;
     R{k,2} = rmsActivation(k,1);
     R{k,3} = rmsRepouso(k,1);
@@ -104,6 +112,6 @@ end
 header = {'', 'RMS Ativacao' , 'RMS Repouso' , 'RMS Ativacao/RMS Repouso' };
 R = [header; R];
 
-header_bloco = [{''}, [repmat( {'BLOCO ATIVACAO'}, 1, length(rmsActivation_blocos)) ], [repmat( {'BLOCO REPOUSO'}, 1, length(rmsRepouso_blocos)) ] , {'p (unpaired t-test)'} ];
+header_bloco = [{''}, [repmat( {'BLOCO ATIVACAO'}, 1, numBlocks) ], [repmat( {'BLOCO REPOUSO'}, 1, numBlocks) ] , {'p (unpaired t-test)'} ];
 R_blocos = [header_bloco; R_blocos];
 
