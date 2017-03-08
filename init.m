@@ -1,3 +1,5 @@
+function init()
+
 mdir = fileparts(mfilename('fullpath'));
 
 addpath( fullfile(mdir,'src') );
