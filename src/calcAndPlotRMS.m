@@ -4,6 +4,12 @@ function [rmsActivation rmsRepouso p ] = calcAndPlotRMS( data, inds_repouso, ind
         colors = { 'r', 'g' };
     end
 
+    % Fixing inds to data size
+    if length(data) < max( [inds_repouso inds_activation])
+        inds_repouso( inds_repouso > length(data) ) = [];
+        inds_activation( inds_activation > length(data) ) = [];
+    end
+    
     rmsRepouso = calcRMS( data(inds_repouso) );
     rmsActivation = calcRMS( data(inds_activation) );
     

@@ -1,8 +1,7 @@
 function tit = makeTitle( fname )
 
-    in = strfind( fname, 'SUBJ' );
-%    ul = strfind( fname, '_' );
-    tit =  fname( in(1) : end-4 );
-    tit = strrep( tit, '_' , '-' ); 
+    names = regexp(fname, 'SUBJ(?<subn>\d+)(?<segment>.*).{4}$', 'names');
+    tit = sprintf( 'SUBJ%03d%s', str2double(names.subn), names.segment );
+    tit = strrep( tit, '_' , '-' );
     
 end
